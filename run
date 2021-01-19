@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+function start() {
+    docker-compose up
+}
+
+function stop() {
+    docker-compose stop
+}
+
+
+"$@"
