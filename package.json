@@ -1,0 +1,25 @@
+{
+  "name": "airlock",
+  "version": "1.0.0",
+  "description": "designing airlock",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwa-lab/airlock.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jwa-lab/airlock/issues"
+  },
+  "homepage": "https://github.com/jwa-lab/airlock#readme",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.5",
+    "grpc": "^1.24.4",
+    "nats": "^1.4.12",
+    "protobufjs": "^6.10.2"
+  }
+}
