@@ -1,2 +1,6 @@
 node_modules
+<<<<<<< HEAD
 .idea
+=======
+dist
+>>>>>>> 42bd07682392cefdf8f368a2987a00a7611a91b0
