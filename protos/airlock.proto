@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package airlock;
+
+service Airlock {
+  rpc Request (AirlockRequest) returns (AirlockReply) {}
+}
+
+message AirlockRequest {
+  required string endpoint = 1;
+  string payload_text = 3;
+}
+
+message AirlockReply {
+  string response_text = 1;
+}
