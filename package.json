@@ -1,33 +1,8 @@
 {
-<<<<<<< HEAD
-  "name": "airlock",
-  "version": "1.0.0",
-  "description": "designing airlock",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jwa-lab/airlock.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jwa-lab/airlock/issues"
-  },
-  "homepage": "https://github.com/jwa-lab/airlock#readme",
-  "dependencies": {
-    "@grpc/proto-loader": "^0.5.5",
-    "grpc": "^1.24.4",
-    "nats": "^1.4.12",
-    "protobufjs": "^6.10.2"
-  }
-=======
     "name": "airlock",
     "version": "0.0.1",
     "description": "Airlock is a gRPC server granting access to the JWA platform's resources",
-    "main": "index.js",
+    "main": "dist/index.js",
     "directories": {
         "test": "tests"
     },
@@ -78,5 +53,4 @@
         "nats": "^1.4.12",
         "ts-nats": "^1.2.15"
     }
->>>>>>> 42bd07682392cefdf8f368a2987a00a7611a91b0
 }

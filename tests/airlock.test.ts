@@ -43,7 +43,7 @@ describe("Given Airlock is running", () => {
         });
 
         it("Then returns a valid response", () => {
-            expect(response).toBe("serviceEndpointA is running, got Hi!");
+            expect(response.response_text).toBe("serviceEndpointA is running, got Hi!");
         });
     });
 
@@ -64,7 +64,7 @@ describe("Given Airlock is running", () => {
         });
 
         it("Then returns a valid response", () => {
-            expect(response).toBe("serviceEndpointA is running, got Heya!");
+            expect(response.response_text).toBe("serviceEndpointB is running, got Heya!");
         });
     });
 
@@ -86,7 +86,7 @@ describe("Given Airlock is running", () => {
 
         it("Then returns an error", () => {
             expect(error.code).toBe(500);
-            expect(error.details).toBe("Request timed out");
+            expect(error.details).toBe("Something went wrong");
         });
     });
 });
