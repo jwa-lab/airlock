@@ -7,7 +7,7 @@ service Airlock {
 }
 
 message AirlockRequest {
-  required string endpoint = 1;
+  string endpoint = 1;
   string payload_text = 2;
 }
 

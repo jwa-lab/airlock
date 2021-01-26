@@ -1,9 +1,15 @@
+import {AirlockReply, AirlockRequest} from "../protos/airlock";
+import { Reader, Writer } from "protobufjs/minimal";
+
 const NATS = require('nats');
 const nc = NATS.connect();
 
 const PROTO_PATH = __dirname + '/../protos/airlock.proto';
 const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader');
+
+
+
 
 const packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
@@ -21,8 +27,14 @@ const airlock = protoDescriptor.airlock;
 
 const server = new grpc.Server();
 
+const bytesCall = AirlockRequest.encode({endpoint: '', payloadText: ''}).finish();
+const testCall = AirlockRequest.decode(Reader.create(bytesCall));
+
+const bytesCallBack = AirlockReply.encode({responseText : ''}).finish();
+const callBack = AirlockReply.decode(Reader.create(bytesCallBack));
+
 server.addService(airlock.Airlock.service, {
-    request: function request(call: any, callback: any) {
+    request: function request(call, callback) {
         nc.request(call.request.endpoint, call.request.payload_text, { max: 1, timeout: 1000 }, (msg : any) => {
             if (msg instanceof NATS.NatsError && msg.code === NATS.REQ_TIMEOUT) {
                 callback({

@@ -51,6 +51,8 @@
     },
     "dependencies": {
         "nats": "^1.4.12",
-        "ts-nats": "^1.2.15"
+        "ts-nats": "^1.2.15",
+        "ts-proto": "^1.50.0",
+        "ts-protoc-gen": "^0.14.0"
     }
 }
