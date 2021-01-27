@@ -1,6 +1,7 @@
 const PROTO_PATH = __dirname + "/../protos/airlock.proto";
 const grpc = require("grpc");
 const protoLoader = require("@grpc/proto-loader");
+//const airlockReply = require('../src/airlock_pb')
 
 const { SERVER_URL = "localhost:50051" } = process.env;
 
@@ -27,7 +28,8 @@ describe("Given Airlock is running", () => {
     });
 
     describe("When I make a request to an existing service", () => {
-        let response;
+//        let response = airlockReply.AirlockReply;
+            let response;
 
         beforeEach((done) => {
             client.request(
@@ -86,7 +88,7 @@ describe("Given Airlock is running", () => {
 
         it("Then returns an error", () => {
             expect(error.code).toBe(500);
-            expect(error.details).toBe("Something went wrong");
+            expect(error.message).toBe("Something went wrong");
         });
     });
 });
