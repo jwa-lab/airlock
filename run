@@ -8,5 +8,12 @@ function stop() {
     docker-compose stop
 }
 
+function docker-build() {
+    docker build . -t jwalab/airlock
+}
+
+function docker-push() {
+    docker push jwalab/airlock
+}
 
 "$@"
