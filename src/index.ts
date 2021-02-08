@@ -1,44 +1,63 @@
-const NATS = require('nats');
+import { connect, JSONCodec } from "nats";
+import * as grpc from "grpc";
+import * as protoLoader from "@grpc/proto-loader";
 
-const PROTO_PATH = __dirname + '/../protos/airlock.proto';
-const grpc = require('grpc');
-const protoLoader = require('@grpc/proto-loader');
+const PROTO_PATH = __dirname + "/../protos/airlock.proto";
 
-const packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {keepCase: true,
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true
-    });
-    
+const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+});
+
 // The protoDescriptor object has the full package hierarchy
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 
 const airlock = protoDescriptor.airlock;
 
-const {
-    NATS_URL = "nats://localhost:4222"
-} = process.env;
+const jsonCodec = JSONCodec();
+
+const { NATS_URL = "nats://localhost:4222" } = process.env;
 
 const server = new grpc.Server();
-const nc = NATS.connect(NATS_URL);
 
-server.addService(airlock.Airlock.service, {
-    request: function request(call: any, callback: any) {
-        nc.request(call.request.endpoint, call.request.payload_text, { max: 1, timeout: 1000 }, (msg : any) => {
-            if (msg instanceof NATS.NatsError && msg.code === NATS.REQ_TIMEOUT) {
+async function init() {
+    const natsSubscription = await connect({
+        servers: NATS_URL
+    });
+
+    server.addService(airlock.Airlock.service, {
+        async request(call: any, callback: any) {
+            try {
+                const response = await natsSubscription.request(
+                    call.request.endpoint,
+                    encode(call.request.payload_text)
+                );
+
+                callback(null, { response_text: decode(response.data) });
+            } catch (err) {
+                console.error(err, call.request);
                 callback({
                     code: 500,
-                    message: 'Something went wrong',
+                    message: "Something went wrong",
                     status: grpc.status.INTERNAL
                 });
-            } else {
-                callback(null, {response_text: msg });
             }
-        });
-    }
-});
-server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
-server.start();
+        }
+    });
+
+    server.bind("0.0.0.0:50051", grpc.ServerCredentials.createInsecure());
+    server.start();
+}
+
+init();
+
+function encode(jsonText: string) {
+    return jsonCodec.encode(JSON.parse(jsonText));
+}
+
+function decode(jsonEncoded: Uint8Array) {
+    return JSON.stringify(jsonCodec.decode(jsonEncoded));
+}

@@ -1,7 +1,6 @@
 FROM node:14-alpine
 
-RUN adduser -D airlock
-USER airlock
+USER node
 
 WORKDIR /app
 

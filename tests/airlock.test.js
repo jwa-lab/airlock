@@ -32,8 +32,9 @@ describe("Given Airlock is running", () => {
         beforeEach((done) => {
             client.request(
                 {
-                    endpoint: "serviceEndpointA",
-                    payload_text: "Hi!"
+                    endpoint: "service",
+                    payload_text:
+                        '{"data":{"XP":"97"},"item_id":1,"quantity":0}'
                 },
                 (err, res) => {
                     response = res;
@@ -43,28 +44,16 @@ describe("Given Airlock is running", () => {
         });
 
         it("Then returns a valid response", () => {
-            expect(response.response_text).toBe("serviceEndpointA is running, got Hi!");
-        });
-    });
-
-    describe("When I make a request to another existing service", () => {
-        let response;
-
-        beforeEach((done) => {
-            client.request(
-                {
-                    endpoint: "serviceEndpointB",
-                    payload_text: "Heya!"
-                },
-                (err, res) => {
-                    response = res;
-                    done();
+            expect(JSON.parse(response.response_text)).toEqual({
+                endpoint: "service",
+                got: {
+                    data: {
+                        XP: "97"
+                    },
+                    item_id: 1,
+                    quantity: 0
                 }
-            );
-        });
-
-        it("Then returns a valid response", () => {
-            expect(response.response_text).toBe("serviceEndpointB is running, got Heya!");
+            });
         });
     });
 
@@ -75,7 +64,8 @@ describe("Given Airlock is running", () => {
             client.request(
                 {
                     endpoint: "invalid",
-                    payload_text: "you there?"
+                    payload_text:
+                        '{"data":{"XP":"97"},"item_id":1,"quantity":0}'
                 },
                 (err) => {
                     error = err;

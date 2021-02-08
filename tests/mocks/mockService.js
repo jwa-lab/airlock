@@ -1,10 +1,20 @@
-const NATS = require("nats");
-const nc = NATS.connect();
+const { connect, JSONCodec } = require("nats");
 
-nc.subscribe("serviceEndpointA", (req, replyTo) => {
-    nc.publish(replyTo, `serviceEndpointA is running, got ${req}`);
-});
+let jc = JSONCodec();
 
-nc.subscribe("serviceEndpointB", (req, replyTo) => {
-    nc.publish(replyTo, `serviceEndpointB is running, got ${req}`);
-});
+async function run() {
+    const nc = await connect();
+
+    const subscription = nc.subscribe("service");
+
+    for await (const message of subscription) {
+        message.respond(
+            jc.encode({
+                endpoint: "service",
+                got: jc.decode(message.data)
+            })
+        );
+    }
+}
+
+run();
