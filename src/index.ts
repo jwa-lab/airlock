@@ -1,63 +1,64 @@
-import { connect, JSONCodec } from "nats";
-import * as grpc from "grpc";
-import * as protoLoader from "@grpc/proto-loader";
-
-const PROTO_PATH = __dirname + "/../protos/airlock.proto";
-
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true
-});
-
-// The protoDescriptor object has the full package hierarchy
-const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-
-const airlock = protoDescriptor.airlock;
+import { connect, ErrorCode, JSONCodec } from "nats";
+import express, { json } from "express";
 
 const jsonCodec = JSONCodec();
 
-const { NATS_URL = "nats://localhost:4222" } = process.env;
+const { NATS_URL = "nats://localhost:4222", HTTP_PORT = 8000 } = process.env;
 
-const server = new grpc.Server();
+interface PlatformResponse extends Object {
+    error?: string;
+}
 
 async function init() {
-    const natsSubscription = await connect({
+    const natsConnection = await connect({
         servers: NATS_URL
     });
 
-    server.addService(airlock.Airlock.service, {
-        async request(call: any, callback: any) {
-            try {
-                const response = await natsSubscription.request(
-                    call.request.endpoint,
-                    encode(call.request.payload_text)
-                );
+    const app = express();
 
-                callback(null, { response_text: decode(response.data) });
-            } catch (err) {
-                console.error(err, call.request);
-                callback({
-                    code: 500,
-                    message: "Something went wrong",
-                    status: grpc.status.INTERNAL
+    app.use(json());
+
+    app.use(async function restToNatsBridge(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        const { method, url, body } = req;
+        const topicName = `${method}:${url.substring(1).split("/").join(".")}`;
+
+        console.log(`[AIRLOCK] Request on ${topicName}`);
+
+        try {
+            const reply = await natsConnection.request(
+                topicName,
+                jsonCodec.encode(body)
+            );
+
+            const response = jsonCodec.decode(reply.data) as PlatformResponse;
+
+            if (response.error) {
+                res.status(400).send({
+                    message: response.error
                 });
+            } else {
+                res.status(200).send(reply.data);
+            }
+        } catch (err) {
+            if (err.code === ErrorCode.NoResponders) {
+                res.status(404).send();
+            } else {
+                res.status(500).send();
             }
         }
+
+        next();
     });
 
-    server.bind("0.0.0.0:50051", grpc.ServerCredentials.createInsecure());
-    server.start();
+    console.info(`[AIRLOCK] Connected to Nats ${natsConnection.getServer()}`);
+
+    app.listen(HTTP_PORT, () => {
+        console.log(`[AIRLOCK] Airlock listening on port ${HTTP_PORT}`);
+    });
 }
 
 init();
-
-function encode(jsonText: string) {
-    return jsonCodec.encode(JSON.parse(jsonText));
-}
-
-function decode(jsonEncoded: Uint8Array) {
-    return JSON.stringify(jsonCodec.decode(jsonEncoded));
-}
