@@ -1,82 +1,86 @@
-const PROTO_PATH = __dirname + "/../protos/airlock.proto";
-const grpc = require("grpc");
-const protoLoader = require("@grpc/proto-loader");
+const axios = require("axios");
 
-const { SERVER_URL = "localhost:50051" } = process.env;
-
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true
-});
-
-const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-
-const airlock = protoDescriptor.airlock;
+const { SERVER_URL = "http://localhost:8000" } = process.env;
 
 describe("Given Airlock is running", () => {
-    let client;
+    describe("When I add an item to the mock service using a POST request", () => {
+        let data;
 
-    beforeAll(() => {
-        client = new airlock.Airlock(
-            SERVER_URL,
-            grpc.credentials.createInsecure()
-        );
-    });
+        beforeAll(async () => {
+            const response = await axios.post(`${SERVER_URL}/item`, {
+                id: 1,
+                name: "KB9"
+            });
 
-    describe("When I make a request to an existing service", () => {
-        let response;
-
-        beforeEach((done) => {
-            client.request(
-                {
-                    endpoint: "service",
-                    payload_text:
-                        '{"data":{"XP":"97"},"item_id":1,"quantity":0}'
-                },
-                (err, res) => {
-                    response = res;
-                    done();
-                }
-            );
+            data = response.data;
         });
 
-        it("Then returns a valid response", () => {
-            expect(JSON.parse(response.response_text)).toEqual({
-                endpoint: "service",
-                got: {
-                    data: {
-                        XP: "97"
-                    },
-                    item_id: 1,
-                    quantity: 0
+        it("Then replies with the item id", () => {
+            expect(data).toEqual({
+                id: 1
+            });
+        });
+
+        describe("When I retrieve the item", () => {
+            beforeAll(async () => {
+                const response = await axios.get(`${SERVER_URL}/item/1`);
+
+                data = response.data;
+            });
+
+            it("Then returns the original item", () => {
+                expect(data).toEqual({
+                    id: 1,
+                    name: "KB9"
+                });
+            });
+        });
+
+        describe("When I retrieve an item that doesn't exist", () => {
+            it("Then throws a client error (400)", async () => {
+                try {
+                    await axios.get(`${SERVER_URL}/item/2`);
+
+                    throw new Error(
+                        "should fail with a 400 error for client request errors"
+                    );
+                } catch (err) {
+                    expect(err.response.data).toEqual({
+                        message: "Item doesn't exist"
+                    });
+
+                    expect(err.response.status).toEqual(400);
                 }
             });
         });
-    });
 
-    describe("When I make a request to an invalid service", () => {
-        let error;
+        describe("When I call an api that doesn't exist", () => {
+            it("Then throws throws a url not found error (404)", async () => {
+                try {
+                    await axios.get(`${SERVER_URL}/ping`);
 
-        beforeEach((done) => {
-            client.request(
-                {
-                    endpoint: "invalid",
-                    payload_text:
-                        '{"data":{"XP":"97"},"item_id":1,"quantity":0}'
-                },
-                (err) => {
-                    error = err;
-                    done();
+                    throw new Error(
+                        "should fail with a 404 error for client request errors"
+                    );
+                } catch (err) {
+                    expect(err.response.status).toEqual(404);
                 }
-            );
+            });
         });
 
-        it("Then returns an error", () => {
-            expect(error.code).toBe(500);
-            expect(error.details).toBe("Something went wrong");
+        // Put this test last, it will crash the server
+        describe("When I call an api that fails to execute its service", () => {
+            it("Then throws throws a server error (500)", async () => {
+                try {
+                    await axios.delete(`${SERVER_URL}/item/1`);
+
+                    throw new Error(
+                        "should fail with a 500 error for client request errors"
+                    );
+                } catch (err) {
+                    expect(err.response.status).toEqual(500);
+                }
+            });
         });
     });
 });
