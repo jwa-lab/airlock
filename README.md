@@ -4,11 +4,13 @@ The JWA Platform is hermetically sealed to reduce the attack surface, the Airloc
 
 ## What is this?
 
-The Airlock provides an gRPC<->NATS.io bridge and an authentication layer. Airlock users may only subscribe to or publish on topics they are authorized to use.
+The Airlock provides an HTTP/REST-like<->NATS.io bridge and an authentication layer. Airlock users may only subscribe to or publish on topics they are authorized to use.
 
-#### A gRPC<->NATS.io bridge?
+#### An HTTP/REST-like<->NATS.io bridge?
 
 A NATS.io server is running inside a private network and is only accessible by approved NATS client. NATS clients are essentially all JWA services sharing data via NATS. NATS is used as a service mesh and the JWA platform follows a microservices pattern.
+To access services inside the JWA platform, Airlock registers itself as another NATS client within the platform with special access rights. It will then accept incoming REST requests just like any ingress service, and translate them to their equivalent NATS requests.
+Airlock currently support request/reply but will eventually also support WebSockets and client/server streaming.
 
 ## Test
 
