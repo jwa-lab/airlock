@@ -1,0 +1,29 @@
+version: 2.1
+orbs:
+    node: circleci/node@4.1.1
+jobs:
+    lint:
+        executor: node/default
+        steps:
+            - checkout
+            - run: npm install
+            - run: npm run lint
+    test:
+        machine:
+            image: ubuntu-2004:202010-01
+        steps:
+            - checkout
+            - run: npm install
+            - run:
+                  command: docker-compose up
+                  background: true
+            - run: sleep 10
+            - run:
+                  command: node ./tests/mocks/mockService.js
+                  background: true
+            - run: npm run test
+workflows:
+    tests:
+        jobs:
+            - lint
+            - test
