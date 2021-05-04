@@ -15,6 +15,9 @@ jobs:
             - checkout
             - run: npm install
             - run:
+                command: npm run dev
+                background: true
+            - run:
                   command: docker-compose up
                   background: true
             - run: sleep 10
