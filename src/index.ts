@@ -31,7 +31,8 @@ async function init() {
         try {
             const reply = await natsConnection.request(
                 topicName,
-                jsonCodec.encode(body)
+                jsonCodec.encode(body),
+                { timeout: 30000 }
             );
 
             const response = jsonCodec.decode(reply.data) as PlatformResponse;
@@ -47,6 +48,7 @@ async function init() {
             if (err.code === ErrorCode.NoResponders) {
                 res.status(404).send();
             } else {
+                console.error(err);
                 res.status(500).send();
             }
         }
