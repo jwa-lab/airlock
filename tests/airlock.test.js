@@ -71,6 +71,8 @@ describe("Given Airlock is running", () => {
         // Put this test last, it will crash the server
         describe("When I call an api that fails to execute its service", () => {
             it("Then throws throws a server error (500)", async () => {
+                jest.setTimeout(40000);
+                
                 try {
                     await axios.delete(`${SERVER_URL}/item/1`);
 

@@ -4,7 +4,6 @@ USER node
 
 WORKDIR /app
 
-COPY protos ./protos
 COPY src ./src
 COPY package.json .
 COPY LICENSE .
@@ -17,4 +16,4 @@ RUN npm run build
 
 ENTRYPOINT ["npm", "run", "start"]
 
-EXPOSE 50051
+EXPOSE 8000
