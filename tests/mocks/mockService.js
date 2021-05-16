@@ -14,7 +14,7 @@ async function run() {
 
     (async () => {
         for await (const message of addItemSub) {
-            const data = jc.decode(message.data);
+            const data = jc.decode(message.data).body;
 
             items[data.id] = data;
 
@@ -28,6 +28,7 @@ async function run() {
 
     (async () => {
         for await (const message of getItemSub) {
+            const query = jc.decode(message.data).query;
             const messageSubstrings = String(message.subject).split(".");
             const subjectSubstrings = "GET:item.*".split(".");
             const wildCardposition = subjectSubstrings.findIndex(
@@ -39,7 +40,13 @@ async function run() {
             const item = items[id];
 
             if (item) {
-                message.respond(jc.encode(items[id]));
+                if (query && query.field) {
+                    message.respond(jc.encode({
+                        [query.field]: items[id][query.field]
+                    }));
+                } else {
+                    message.respond(jc.encode(items[id]));
+                }
             } else {
                 message.respond(jc.encode({ error: "Item doesn't exist" }));
             }

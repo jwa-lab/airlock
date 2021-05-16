@@ -23,15 +23,17 @@ async function init() {
         res: express.Response,
         next: express.NextFunction
     ) {
-        const { method, url, body } = req;
-        const topicName = `${method}:${url.substring(1).split("/").join(".")}`;
+        const { method, path, body, query } = req;
+        const subjectName = `${method}:${path.substring(1).split("/").join(".")}`;
 
-        console.log(`[AIRLOCK] Request on ${topicName}`);
+        console.log(`[AIRLOCK] Request on ${subjectName}`);
 
         try {
             const reply = await natsConnection.request(
-                topicName,
-                jsonCodec.encode(body),
+                subjectName,
+                jsonCodec.encode({
+                    body, query
+                }),
                 { timeout: 30000 }
             );
 
