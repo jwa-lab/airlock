@@ -36,6 +36,20 @@ describe("Given Airlock is running", () => {
             });
         });
 
+        describe("When I retrieve an item with a query", () => {
+            beforeAll(async () => {
+                const response = await axios.get(`${SERVER_URL}/item/1?field=name`);
+
+                data = response.data;
+            });
+
+            it("Then returns the required field for the item", () => {
+                expect(data).toEqual({
+                    name: "KB9"
+                });
+            });
+        });
+
         describe("When I retrieve an item that doesn't exist", () => {
             it("Then throws a client error (400)", async () => {
                 try {
