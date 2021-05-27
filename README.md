@@ -14,7 +14,7 @@ Airlock currently support request/reply but will eventually also support WebSock
 
 ## Test
 
-1. First, start NATS:
+1. First, start NATS & the mock Auth service:
 
 ```
 docker-compose up
@@ -23,12 +23,17 @@ docker-compose up
 2. Then start the mock service
 
 ```
-node tests/mocks/mockServices.ts
+node tests/mocks/mockService.js
 ```
 
-3. Then start airlock
+3. Then, set the following environment variables and start airlock
 
 ```
+AUTH_URL=localhost:8999
+AUTH_PROTOCOL=http
+SECURE=false
+NATS_URL=nats://localhost:4222
+
 npm run dev
 ```
 

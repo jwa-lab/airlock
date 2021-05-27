@@ -5,7 +5,7 @@ import OpenAPIMetadata from "./OpenApiMetadata.json";
 
 export default class SwaggerBuilder {
     private readonly swagger: OpenAPIV3.Document;
- 
+
     constructor() {
         this.swagger = JSON.parse(JSON.stringify(OpenAPIMetadata));
     }

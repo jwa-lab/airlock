@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 
+export NATS_URL=nats://localhost:4222
+export AUTH_URL=localhost:8999
+export AUTH_PROTOCOL=http
+export SECURE=false
+
 function start() {
     docker-compose up
 }
@@ -14,6 +19,18 @@ function docker-build() {
 
 function docker-push() {
     docker push jwalab/airlock
+}
+
+function start() {
+    node dist/index.js
+}
+
+function dev() {
+    npm run dev
+}
+
+function build() {
+    npm run build
 }
 
 "$@"

@@ -10,10 +10,21 @@ async function run() {
     const addItemSub = nc.subscribe("POST:item");
     const getItemSub = nc.subscribe("GET:item.*");
     const errorSub = nc.subscribe("DELETE:item.*");
+    const authorizeSub = nc.subscribe("GET:auth");
     const pingSub = nc.subscribe("ping");
 
     const docsService1 = nc.subscribe("docs");
     const docsService2 = nc.subscribe("docs");
+
+    (async () => {
+        for await (const message of authorizeSub) {
+            message.respond(
+                jc.encode({
+                    result: true
+                })
+            );
+        }
+    })().then();
 
     (async () => {
         for await (const message of addItemSub) {

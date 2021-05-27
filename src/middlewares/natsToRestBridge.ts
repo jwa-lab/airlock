@@ -1,5 +1,6 @@
 import { ErrorCode, JSONCodec, NatsConnection } from "nats";
 import { NextFunction, Request, Response } from "express";
+import { BadRequestError, NotFoundRequestError } from "../lib/errors";
 
 interface PlatformResponse extends Object {
     error?: string;
@@ -15,7 +16,7 @@ export default function restToNatsBridgeFactory(
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        const { method, path, body, query } = req;
+        const { method, path, body, query, originalUrl } = req;
         const subjectName = `${method}:${path
             .substring(1)
             .split("/")
@@ -35,19 +36,20 @@ export default function restToNatsBridgeFactory(
 
             const response = jsonCodec.decode(reply.data) as PlatformResponse;
 
-            if (response.error) {
-                res.status(400).send({
-                    message: response.error
-                });
+            if (response?.error) {
+                return next(new BadRequestError(response.error));
             } else {
                 res.status(200).send(reply.data);
             }
         } catch (err) {
             if (err.code === ErrorCode.NoResponders) {
-                res.status(404).send();
+                return next(
+                    new NotFoundRequestError(
+                        `No endpoint found at ${method}:${originalUrl}`
+                    )
+                );
             } else {
-                console.error(err);
-                res.status(500).send();
+                return next(new Error());
             }
         }
 
