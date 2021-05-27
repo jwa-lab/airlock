@@ -1,6 +1,6 @@
 {
     "info": {
-        "_postman_id": "3431c32a-55db-4b8c-89f0-89b29cb914a2",
+        "_postman_id": "afc5b473-c582-4bc9-9019-b9c85c4b640f",
         "name": "Test Airlock",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
@@ -12,7 +12,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"KB9\"\r\n}",
+                    "raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"KAB9\"\r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -73,6 +73,32 @@
                 }
             },
             "response": []
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{airlock_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
         }
     ]
 }
