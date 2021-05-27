@@ -1,9 +1,10 @@
 import { connect, ErrorCode, JSONCodec } from "nats";
 import express, { json } from "express";
-
-const jsonCodec = JSONCodec();
+import { oktaMiddleware } from "./lib/okta.middleware";
 
 const { NATS_URL = "nats://localhost:4222", HTTP_PORT = 8000 } = process.env;
+
+const jsonCodec = JSONCodec();
 
 interface PlatformResponse extends Object {
     error?: string;
@@ -17,6 +18,8 @@ async function init() {
     const app = express();
 
     app.use(json());
+
+    app.use('/', oktaMiddleware);
 
     app.use(async function restToNatsBridge(
         req: express.Request,
