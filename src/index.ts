@@ -1,6 +1,6 @@
 import { connect, ErrorCode, JSONCodec } from "nats";
 import express, { json } from "express";
-import { oktaMiddleware } from "./lib/okta.middleware";
+import { authorizationMiddleware } from "./lib/authorization.middleware";
 
 const { NATS_URL = "nats://localhost:4222", HTTP_PORT = 8000 } = process.env;
 
@@ -19,7 +19,7 @@ async function init() {
 
     app.use(json());
 
-    app.use('/', oktaMiddleware);
+    app.use(authorizationMiddleware);
 
     app.use(async function restToNatsBridge(
         req: express.Request,
