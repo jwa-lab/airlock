@@ -24,6 +24,11 @@ jobs:
             - run:
                   command: node ./tests/mocks/mockService.js
                   background: true
+            - run: sleep 3
+            - run:
+                  command: node ./tests/mocks/mockAuthorizationService.js
+                  background: true
+            - run: sleep 3
             - run: npm run test
 workflows:
     tests:
