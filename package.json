@@ -12,6 +12,7 @@
         "prettier": "prettier --write .",
         "build": "npx tsc",
         "start": "node ./dist/index.js",
+        "start:prod": "node ./dist/index.js --prod",
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
         "test": "jest tests/"
     },

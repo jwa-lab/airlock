@@ -23,16 +23,22 @@ docker-compose up
 2. Then start the mock service
 
 ```
-node tests/mocks/mockServices.ts
+node tests/mocks/mockService.js
 ```
 
-3. Then start airlock
+3. Then start the authorization service
+
+```
+node tests/mocks/mockAuthorizationService.js
+```
+
+4. Then start airlock
 
 ```
 npm run dev
 ```
 
-4. Finally, run the tests
+5. Finally, run the tests
 
 ```
 npm run test
