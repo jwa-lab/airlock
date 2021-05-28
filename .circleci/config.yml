@@ -4,7 +4,6 @@ orbs:
 jobs:
     lint:
         executor: node/default
-        tag: '14.16'
         steps:
             - checkout
             - run: npm install
