@@ -12,6 +12,8 @@ jobs:
         machine:
             image: ubuntu-2004:202010-01
         steps:
+            - nvm use 14.12.0
+            - node -v
             - checkout
             - run: npm install
             - run:
