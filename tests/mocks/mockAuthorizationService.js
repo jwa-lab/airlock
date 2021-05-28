@@ -14,7 +14,7 @@ async function init() {
     app.use("/introspect", (req, res, next) => {
         const { method, body } = req;
 
-        if (!body['token']) {
+        if (!body?.token) {
             res.status(400).send({ error: "Invalid body, token is missing.", timestamp: Date.now() });
             return;
         }
