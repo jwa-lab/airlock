@@ -1,9 +1,10 @@
 version: 2.1
 orbs:
-    node: circleci/node@4.1.1
+    node: circleci/node@4.4.0
 jobs:
     lint:
         executor: node/default
+        tag: '14.16'
         steps:
             - checkout
             - run: npm install
@@ -13,7 +14,6 @@ jobs:
             image: ubuntu-2004:202010-01
         steps:
             - checkout
-            - run: node -v
             - run: npm install
             - run:
                 command: npm run dev
