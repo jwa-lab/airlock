@@ -1,0 +1,14 @@
+const {
+    NATS_URL = "nats://localhost:4222",
+    HTTP_PORT = 8000,
+    DOCS_GATHERING_TIMEOUT = 50
+} = process.env;
+
+const NUM_HTTP_PORT = Number(HTTP_PORT);
+const NUM_DOCS_GATHERING_TIMEOUT = Number(DOCS_GATHERING_TIMEOUT);
+
+export {
+    NATS_URL,
+    NUM_HTTP_PORT as HTTP_PORT,
+    NUM_DOCS_GATHERING_TIMEOUT as DOCS_GATHERING_TIMEOUT
+};
