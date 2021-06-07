@@ -12,6 +12,9 @@ async function run() {
     const errorSub = nc.subscribe("DELETE:item.*");
     const pingSub = nc.subscribe("ping");
 
+    const docsService1 = nc.subscribe("docs");
+    const docsService2 = nc.subscribe("docs");
+
     (async () => {
         for await (const message of addItemSub) {
             const data = jc.decode(message.data).body;
@@ -21,6 +24,43 @@ async function run() {
             message.respond(
                 jc.encode({
                     id: data.id
+                })
+            );
+        }
+    })().then();
+
+    (async () => {
+        for await (const message of docsService1) {
+            message.respond(
+                jc.encode({
+                    paths: {
+                        "/service-a": {
+                            get: {
+                                description: "get thingies from service-a"
+                            }
+                        },
+                        "/service-a/fields": {
+                            put: {
+                                description: "update thingies in service-a"
+                            }
+                        }
+                    }
+                })
+            );
+        }
+    })().then();
+
+    (async () => {
+        for await (const message of docsService2) {
+            message.respond(
+                jc.encode({
+                    paths: {
+                        "/service-b": {
+                            get: {
+                                description: "get thingies from service-b"
+                            }
+                        }
+                    }
                 })
             );
         }
@@ -41,9 +81,11 @@ async function run() {
 
             if (item) {
                 if (query && query.field) {
-                    message.respond(jc.encode({
-                        [query.field]: items[id][query.field]
-                    }));
+                    message.respond(
+                        jc.encode({
+                            [query.field]: items[id][query.field]
+                        })
+                    );
                 } else {
                     message.respond(jc.encode(items[id]));
                 }

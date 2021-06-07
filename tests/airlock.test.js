@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const { SERVER_URL = "http://localhost:8000" } = process.env;
+const { SERVER_URL = "http://localhost:8000/api" } = process.env;
 
 describe("Given Airlock is running", () => {
     describe("When I add an item to the mock service using a POST request", () => {
@@ -38,7 +38,9 @@ describe("Given Airlock is running", () => {
 
         describe("When I retrieve an item with a query", () => {
             beforeAll(async () => {
-                const response = await axios.get(`${SERVER_URL}/item/1?field=name`);
+                const response = await axios.get(
+                    `${SERVER_URL}/item/1?field=name`
+                );
 
                 data = response.data;
             });
@@ -86,7 +88,7 @@ describe("Given Airlock is running", () => {
         describe("When I call an api that fails to execute its service", () => {
             it("Then throws throws a server error (500)", async () => {
                 jest.setTimeout(40000);
-                
+
                 try {
                     await axios.delete(`${SERVER_URL}/item/1`);
 

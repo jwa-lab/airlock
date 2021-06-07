@@ -7,28 +7,34 @@ interface PlatformResponse extends Object {
 
 const jsonCodec = JSONCodec();
 
-export default function restToNatsBridgeFactory(natsConnection: NatsConnection) {
+export default function restToNatsBridgeFactory(
+    natsConnection: NatsConnection
+) {
     return async function restToNatsBridge(
         req: Request,
         res: Response,
         next: NextFunction
     ): Promise<void> {
         const { method, path, body, query } = req;
-        const subjectName = `${method}:${path.substring(1).split("/").join(".")}`;
-    
+        const subjectName = `${method}:${path
+            .substring(1)
+            .split("/")
+            .join(".")}`;
+
         console.log(`[AIRLOCK] Request on ${subjectName}`);
-    
+
         try {
             const reply = await natsConnection.request(
                 subjectName,
                 jsonCodec.encode({
-                    body, query
+                    body,
+                    query
                 }),
                 { timeout: 30000 }
             );
-    
+
             const response = jsonCodec.decode(reply.data) as PlatformResponse;
-    
+
             if (response.error) {
                 res.status(400).send({
                     message: response.error
@@ -44,7 +50,7 @@ export default function restToNatsBridgeFactory(natsConnection: NatsConnection) 
                 res.status(500).send();
             }
         }
-    
+
         next();
-    }
+    };
 }

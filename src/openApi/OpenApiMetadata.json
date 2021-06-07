@@ -1,0 +1,22 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "description": "PlayTiX | JWA Platform API Definition",
+        "version": "0.0.1",
+        "title": "PlayTiX | JWA Platform API Definition",
+        "contact": {
+            "name": "PlayTiX | JWA Platform support",
+            "email": "support@playtix.io",
+            "url": "https://jwa-lab.github.io/platform-docs/"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "servers": {
+            "url": "http://localhost:8000/",
+            "description": "local server"
+        }
+    },
+    "paths": {}
+}

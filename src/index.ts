@@ -1,10 +1,10 @@
 import { connect } from "nats";
 import express, { json } from "express";
+import cors from "cors";
 
-import restToNatsBridge from "./natsToRestBridge";
-import serveOpenAPIDocs from "./openAPIDocs";
-
-const { NATS_URL = "nats://localhost:4222", HTTP_PORT = 8000 } = process.env;
+import restToNatsBridge from "./middlewares/natsToRestBridge";
+import serveOpenAPIDocs from "./middlewares/openAPIDocs";
+import { HTTP_PORT, NATS_URL } from "./config";
 
 async function init() {
     const natsConnection = await connect({
@@ -15,8 +15,8 @@ async function init() {
 
     app.use(json());
 
-    app.use(serveOpenAPIDocs);
-    app.use(restToNatsBridge(natsConnection));
+    app.get("/docs", cors(), serveOpenAPIDocs(natsConnection));
+    app.use("/api", restToNatsBridge(natsConnection));
 
     console.info(`[AIRLOCK] Connected to Nats ${natsConnection.getServer()}`);
 
