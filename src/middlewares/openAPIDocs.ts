@@ -23,7 +23,6 @@ export default function serveOpenAPIDocs(natsConnection: NatsConnection) {
         );
 
         natsConnection.publish("docs", Empty, {
-            noMux: true,
             reply: docsInbox
         });
 
