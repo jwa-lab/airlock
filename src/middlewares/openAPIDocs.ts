@@ -43,9 +43,13 @@ async function gatherDocs(subscription: Subscription, timeout: number) {
             }, timeout);
 
             for await (const message of subscription) {
-                openApiBuilder.addPaths(
-                    (jc.decode(message.data) as OpenAPIV3.Document).paths
-                );
+                try {
+                    const openApiDoc = jc.decode(message.data) as OpenAPIV3.Document;
+
+                    openApiBuilder.addPaths(openApiDoc.paths);
+                } catch (err) {
+                    console.error('[AIRLOCK] Invalid OpenAPIV3 docs received when gathering docs');
+                }
             }
         })().catch(reject);
     });
