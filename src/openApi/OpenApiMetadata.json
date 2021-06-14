@@ -1,5 +1,6 @@
 {
     "openapi": "3.0.3",
+    "servers": [{ "url": "/api" }],
     "info": {
         "description": "PlayTiX | JWA Platform API Definition",
         "version": "0.0.1",
@@ -18,5 +19,7 @@
             "description": "local server"
         }
     },
-    "paths": {}
+    "tags": [],
+    "paths": {},
+    "components": {}
 }
