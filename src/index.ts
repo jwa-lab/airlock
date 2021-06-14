@@ -16,7 +16,7 @@ async function init() {
     app.use(json());
 
     app.get("/docs", cors(), serveOpenAPIDocs(natsConnection));
-    app.use("/api", restToNatsBridge(natsConnection));
+    app.use("/api", cors(), restToNatsBridge(natsConnection));
 
     console.info(`[AIRLOCK] Connected to Nats ${natsConnection.getServer()}`);
 
