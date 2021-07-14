@@ -33,4 +33,8 @@ function build() {
     npm run build
 }
 
+function test() {
+    npm run test
+}
+
 "$@"

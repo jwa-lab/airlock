@@ -24,5 +24,11 @@ describe("Given Airlock is running", () => {
                 "/service-b"
             ]);
         });
+
+        it("Then sets the server url", () => {
+            expect(docs.servers.find((server) => {
+                return server.url === `${ SERVER_URL }/api`
+            }));
+        });
     });
 });
