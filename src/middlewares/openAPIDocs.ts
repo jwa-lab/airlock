@@ -18,6 +18,7 @@ export default function serveOpenAPIDocs(natsConnection: NatsConnection) {
         const docsInbox = createInbox();
 
         const docsPromise = gatherDocs(
+            req,
             natsConnection.subscribe(docsInbox),
             DOCS_GATHERING_TIMEOUT
         );
@@ -32,7 +33,7 @@ export default function serveOpenAPIDocs(natsConnection: NatsConnection) {
     };
 }
 
-async function gatherDocs(subscription: Subscription, timeout: number) {
+async function gatherDocs(req: Request, subscription: Subscription, timeout: number) {
     return new Promise((resolve, reject) => {
         (async () => {
             const openApiBuilder = new OpenApiBuilder();
@@ -49,6 +50,7 @@ async function gatherDocs(subscription: Subscription, timeout: number) {
                     ) as OpenAPIV3.Document;
 
                     openApiBuilder
+                        .setUrl(req)
                         .addPaths(openApiDoc.paths)
                         .addComponents(openApiDoc.components || {})
                         .addTags(openApiDoc.tags || []);
