@@ -1,5 +1,6 @@
 import { OpenAPIV3 } from "openapi-types";
 import { merge } from "lodash";
+import { Request } from "express";
 
 import OpenAPIMetadata from "./OpenApiMetadata.json";
 
@@ -8,6 +9,17 @@ export default class SwaggerBuilder {
 
     constructor() {
         this.swagger = JSON.parse(JSON.stringify(OpenAPIMetadata));
+    }
+
+    setUrl(req: Request): this {
+        this.swagger.servers = [
+            {
+                url: `${req.protocol}://${req.headers.host}/api`,
+                description: `Services available via this Airlock`
+            }
+        ];
+
+        return this;
     }
 
     addPaths(paths: OpenAPIV3.PathsObject): this {
