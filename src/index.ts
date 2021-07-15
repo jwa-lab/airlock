@@ -16,7 +16,9 @@ async function init() {
             await drain(natsConnection);
             process.exit(exitCode);
         } catch (e) {
-            console.log(`[AIRLOCK] Unable to drain Nats connection, shutting down . . .`);
+            console.error(
+                "[AIRLOCK] Unable to drain Nats connection, shutting down . . ."
+            );
         } finally {
             process.exit(1);
         }
