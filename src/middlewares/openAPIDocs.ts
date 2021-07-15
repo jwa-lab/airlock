@@ -33,7 +33,11 @@ export default function serveOpenAPIDocs(natsConnection: NatsConnection) {
     };
 }
 
-async function gatherDocs(req: Request, subscription: Subscription, timeout: number) {
+async function gatherDocs(
+    req: Request,
+    subscription: Subscription,
+    timeout: number
+) {
     return new Promise((resolve, reject) => {
         (async () => {
             const openApiBuilder = new OpenApiBuilder();
