@@ -3,7 +3,7 @@ export class NotFoundRequestError extends Error {
 
     constructor(message: string) {
         super(message);
-        this.name = "AUTH_URL_NOT_FOUND";
+        this.name = "URL_NOT_FOUND";
         this.statusCode = 404;
     }
 }

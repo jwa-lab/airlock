@@ -5,7 +5,8 @@ const {
     SECURE = "true",
     NATS_URL = "nats://localhost:4222",
     HTTP_PORT = 8000,
-    DOCS_GATHERING_TIMEOUT = 50
+    DOCS_GATHERING_TIMEOUT = 50,
+    SSO_URI_ORIGIN = "http://localhost:3001"
 } = process.env;
 
 const NUM_HTTP_PORT = Number(HTTP_PORT);
@@ -50,6 +51,14 @@ if (!HTTP_PORT) {
     );
 }
 
+if (!SSO_URI_ORIGIN) {
+    console.warn(
+        "========================================================================================================",
+        "No SSO_URI_ORIGIN, using default http://localhost:3001",
+        "========================================================================================================"
+    );
+}
+
 export {
     AUTH_SERVER,
     AUTH_PROTOCOL,
@@ -57,5 +66,6 @@ export {
     BOOL_SECURE as SECURE,
     NATS_URL,
     NUM_HTTP_PORT as HTTP_PORT,
-    NUM_DOCS_GATHERING_TIMEOUT as DOCS_GATHERING_TIMEOUT
+    NUM_DOCS_GATHERING_TIMEOUT as DOCS_GATHERING_TIMEOUT,
+    SSO_URI_ORIGIN
 };

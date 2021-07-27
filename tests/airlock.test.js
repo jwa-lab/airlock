@@ -144,7 +144,7 @@ describe("Given Airlock is running", () => {
                 } catch (err) {
                     expect(err.response.data).toEqual({
                         message: "Item doesn't exist",
-                        name: "AUTH_BAD_REQUEST"
+                        name: "BAD_REQUEST"
                     });
 
                     expect(err.response.status).toEqual(400);

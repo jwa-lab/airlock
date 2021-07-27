@@ -3,7 +3,7 @@ export class BadRequestError extends Error {
 
     constructor(message: string) {
         super(message);
-        this.name = "AUTH_BAD_REQUEST";
+        this.name = "BAD_REQUEST";
         this.statusCode = 400;
     }
 }
