@@ -1,12 +1,13 @@
 import { connect, NatsConnection } from "nats";
-import express, { json } from "express";
+import express, { json, urlencoded } from "express";
 import cors from "cors";
 import restToNatsBridge from "./middlewares/natsToRestBridge";
 import serveOpenAPIDocs from "./middlewares/openAPIDocs";
-import { HTTP_PORT, NATS_URL } from "./config";
+import { HTTP_PORT, NATS_URL, SSO_URI_ORIGIN } from "./config";
 import errorHandlingMiddleware from "./middlewares/errorHandler";
 import authorizationMiddleware from "./middlewares/authorization";
 import { drain } from "./lib/nats/nats";
+import cookieParser from "cookie-parser";
 
 let natsConnection: NatsConnection;
 
@@ -31,11 +32,19 @@ async function init() {
 
         const app = express();
 
+        app.use(cookieParser());
         app.use(json());
+        app.use(urlencoded({ extended: true }));
 
         app.get("/docs", cors(), serveOpenAPIDocs(natsConnection));
+        app.use(
+            "/auth",
+            cors({ origin: [SSO_URI_ORIGIN], credentials: true }),
+            restToNatsBridge(natsConnection)
+        );
         app.use("/", cors(), authorizationMiddleware);
         app.use("/api", cors(), restToNatsBridge(natsConnection));
+
         app.use(errorHandlingMiddleware);
 
         console.info(

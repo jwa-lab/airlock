@@ -1,4 +1,9 @@
-import { ErrorCode, JSONCodec, NatsConnection, headers as natsHeaders } from "nats";
+import {
+    ErrorCode,
+    JSONCodec,
+    NatsConnection,
+    headers as natsHeaders
+} from "nats";
 import { NextFunction, Request, Response } from "express";
 import { BadRequestError, NotFoundRequestError } from "../lib/errors";
 
@@ -27,7 +32,13 @@ export default function restToNatsBridgeFactory(
 
         try {
             if (headers?.authorization) {
-                natsRequestHeaders.append('authorization', headers.authorization);
+                natsRequestHeaders.append(
+                    "authorization",
+                    headers.authorization
+                );
+            }
+            if (headers?.cookie) {
+                natsRequestHeaders.append("cookie", headers.cookie);
             }
 
             const reply = await natsConnection.request(
@@ -38,14 +49,20 @@ export default function restToNatsBridgeFactory(
                 }),
                 { timeout: 30000, headers: natsRequestHeaders }
             );
-
             const response = jsonCodec.decode(reply.data) as PlatformResponse;
 
             if (response?.error) {
                 return next(new BadRequestError(response.error));
-            } else {
-                res.status(200).send(reply.data);
             }
+
+            if (reply?.headers?.get("set-cookie")) {
+                res.set(
+                    "set-cookie",
+                    JSON.parse(reply.headers.get("set-cookie")).cookies
+                );
+            }
+
+            res.status(200).send(reply.data);
         } catch (err) {
             if (err.code === ErrorCode.NoResponders) {
                 return next(
@@ -57,7 +74,5 @@ export default function restToNatsBridgeFactory(
                 return next(new Error());
             }
         }
-
-        next();
     };
 }
