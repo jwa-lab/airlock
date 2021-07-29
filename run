@@ -1,9 +1,18 @@
 #! /usr/bin/env bash
 
+set -euo pipefail
+
 export NATS_URL=nats://localhost:4222
 export AUTH_URL=localhost:8999
 export AUTH_PROTOCOL=http
 export SECURE=false
+
+declare -a tags=(
+    $(git rev-parse --verify HEAD --short)
+    $(node -p -e "require('./package.json').version")
+)
+
+declare name=$(node -p -e "require('./package.json').name")
 
 function start() {
     docker-compose up
@@ -39,6 +48,25 @@ function build() {
 
 function test() {
     npm run test
+}
+
+function docker-build() {
+    docker build . -t jwalab/$name
+}
+
+function docker-tag() {
+    for tag in ${tags[@]}
+    do
+        docker tag jwalab/$name jwalab/$name:$tag
+    done
+}
+
+function docker-push() {
+    docker push jwalab/$name
+    for tag in ${tags[@]}
+    do
+        docker push jwalab/$name:$tag
+    done
 }
 
 "$@"
