@@ -26,19 +26,14 @@ docker-compose up
 node tests/mocks/mockService.js
 ```
 
-3. Then, set the following environment variables and start airlock
+3. Start airlock
 
 ```
-AUTH_URL=localhost:8999
-AUTH_PROTOCOL=http
-SECURE=false
-NATS_URL=nats://localhost:4222
-
-npm run dev
+./run dev
 ```
 
 4. Finally, run the tests
 
 ```
-npm run test
+./run test
 ```
