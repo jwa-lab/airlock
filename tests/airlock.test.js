@@ -17,6 +17,13 @@ describe("Given Airlock is running", () => {
         axiosConfig.headers.Authorization = `Bearer ${await utils.generateTestToken()}`;
     });
 
+    describe("When I try to access the health check endpoint", () => {
+        it("Then replies with a 200 status code", async () => {
+            const response = await axios.get(`http://localhost:8000/health-check`);
+            expect(response.status).toEqual(200);
+        });
+    });
+
     describe("When I try to access to the mock service with no token", () => {
         it("Then replies with a status code 401", async () => {
             try {

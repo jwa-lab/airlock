@@ -3,10 +3,11 @@ import express, { json, urlencoded } from "express";
 import cors from "cors";
 import restToNatsBridge from "./middlewares/natsToRestBridge";
 import serveOpenAPIDocs from "./middlewares/openAPIDocs";
+import healthCheck from "./middlewares/healthCheck";
 import { HTTP_PORT, NATS_URL, SSO_URI_ORIGIN } from "./config";
 import errorHandlingMiddleware from "./middlewares/errorHandler";
 import authorizationMiddleware from "./middlewares/authorization";
-import { drain } from "./lib/nats/nats";
+import { drain, NatsConnectionMonitor } from "./lib/nats/nats";
 import cookieParser from "cookie-parser";
 
 let natsConnection: NatsConnection;
@@ -29,6 +30,11 @@ async function init() {
         natsConnection = await connect({
             servers: NATS_URL
         });
+        const ncMonitor = new NatsConnectionMonitor(natsConnection, () => {
+            console.error('[AIRLOCK] nats connection closed');
+            process.exit(1);
+        });
+
 
         const app = express();
 
@@ -37,6 +43,7 @@ async function init() {
         app.use(urlencoded({ extended: true }));
 
         app.get("/docs", cors(), serveOpenAPIDocs(natsConnection));
+        app.get("/health-check", healthCheck(ncMonitor));
         app.use(
             "/auth",
             cors({ origin: [SSO_URI_ORIGIN], credentials: true }),
