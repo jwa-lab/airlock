@@ -14,24 +14,31 @@ export class NatsConnectionMonitor {
 
     private async handleStatus(nc: NatsConnection) {
         for await (const status of nc.status()) {
-            console.info(`[AIRLOCK] nats event : ${status.type} => ${JSON.stringify(status.data)}`);
+            console.info(
+                `[AIRLOCK] nats event : ${status.type} => ${JSON.stringify(
+                    status.data
+                )}`
+            );
 
             switch (status.type) {
-                case "disconnect" :
+                case "disconnect":
                     this.connected = false;
                     break;
-                case "reconnect" :
+                case "reconnect":
                     this.connected = true;
                     break;
             }
         }
     }
 
-    private handleClosing(nc: NatsConnection, connectionLostCallback: () => void) {
+    private handleClosing(
+        nc: NatsConnection,
+        connectionLostCallback: () => void
+    ) {
         nc.closed().finally(() => {
             console.error("[AIRLOCK] nats connection definitely closed");
             connectionLostCallback();
-        })
+        });
     }
 }
 
