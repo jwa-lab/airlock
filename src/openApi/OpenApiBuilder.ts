@@ -15,7 +15,7 @@ export default class SwaggerBuilder {
         this.swagger.servers = [
             {
                 url: `${req.protocol}://${req.headers.host}/api`,
-                description: `Services available via this Airlock`
+                description: "Services available via this Airlock"
             }
         ];
 

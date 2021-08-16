@@ -7,7 +7,7 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
-    "env": {
-        "jest": true
+    env: {
+        jest: true
     }
 };

@@ -19,7 +19,9 @@ describe("Given Airlock is running", () => {
 
     describe("When I try to access the health check endpoint", () => {
         it("Then replies with a 200 status code", async () => {
-            const response = await axios.get(`http://localhost:8000/health-check`);
+            const response = await axios.get(
+                `http://localhost:8000/health-check`
+            );
             expect(response.status).toEqual(200);
         });
     });

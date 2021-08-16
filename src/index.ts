@@ -31,10 +31,9 @@ async function init() {
             servers: NATS_URL
         });
         const ncMonitor = new NatsConnectionMonitor(natsConnection, () => {
-            console.error('[AIRLOCK] nats connection closed');
+            console.error("[AIRLOCK] nats connection closed");
             process.exit(1);
         });
-
 
         const app = express();
 
