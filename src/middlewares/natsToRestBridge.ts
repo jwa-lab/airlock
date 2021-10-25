@@ -45,7 +45,7 @@ export default function restToNatsBridgeFactory(
                 subjectName,
                 jsonCodec.encode({
                     body,
-                    query
+                    query: query || {}
                 }),
                 { timeout: 30000, headers: natsRequestHeaders }
             );
