@@ -1,6 +1,6 @@
 {
     "name": "airlock",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "description": "Airlock is an HTTP<->NATS bridge granting access to the JWA platform's resources",
     "main": "dist/index.js",
     "directories": {
@@ -13,7 +13,8 @@
         "build": "npx tsc",
         "start": "node ./dist/index.js",
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
-        "test": "jest tests/"
+        "test": "jest tests/",
+        "prepare": "husky install"
     },
     "repository": {
         "type": "git",
@@ -62,8 +63,10 @@
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "husky": "^7.0.4",
         "lodash": "^4.17.20",
         "nats": "^2.0.6",
+        "pretty-quick": "^3.1.1",
         "uuid": "^8.3.2"
     },
     "jest": {
