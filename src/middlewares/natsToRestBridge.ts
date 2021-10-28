@@ -62,7 +62,7 @@ export default function restToNatsBridgeFactory(
                 );
             }
 
-            res.status(200).send(reply.data);
+            res.status(200).send(response);
         } catch (err) {
             if (err.code === ErrorCode.NoResponders) {
                 return next(
