@@ -3,12 +3,15 @@ version: "3.8"
 services:
     nats:
         image: nats:latest
-        command: []
+        command: ["-js"]
         ports:
             - "4222:4222"
             - "6222:6222"
             - "8222:8222"
     authorization-service:
-        image: jwalab/authorization-service:latest
+        image: jwalab/authorization-service:0.0.4
         ports:
             - "8999:8999"
+        environment:
+            - TOKEN_ISSUER=localhost
+        restart: always
