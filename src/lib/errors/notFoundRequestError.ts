@@ -1,9 +1,13 @@
-export class NotFoundRequestError extends Error {
-    private statusCode: number;
+import { JWAError } from "@jwalab/errors";
 
-    constructor(message: string) {
-        super(message);
-        this.name = "URL_NOT_FOUND";
-        this.statusCode = 404;
+export class NotFoundRequestError extends JWAError {
+    constructor(message: string, origin?: Error) {
+        super(
+            404,
+            NotFoundRequestError.name,
+            `URL Not found. Details: ${message}`,
+            "URL_NOT_FOUND",
+            origin
+        );
     }
 }

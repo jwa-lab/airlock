@@ -19,6 +19,8 @@ jobs:
                   command: docker-compose up
                   background: true
             - run: npm install
+            - run: npm run build
+            - run: sleep 1
             - run:
                   command: node ./tests/mocks/mockService.js
                   background: true
