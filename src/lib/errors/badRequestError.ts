@@ -1,9 +1,13 @@
-export class BadRequestError extends Error {
-    private statusCode: number;
+import { JWAError } from "@jwalab/errors";
 
-    constructor(message: string) {
-        super(message);
-        this.name = "BAD_REQUEST";
-        this.statusCode = 400;
+export class BadRequestError extends JWAError {
+    constructor(message: string, origin?: Error) {
+        super(
+            400,
+            BadRequestError.name,
+            `Invalid payload. Details: ${message}`,
+            "BAD_REQUEST",
+            origin
+        );
     }
 }

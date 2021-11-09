@@ -1,9 +1,13 @@
-export class UnauthorizedRequestError extends Error {
-    private statusCode: number;
+import { JWAError } from "@jwalab/errors";
 
-    constructor(message: string) {
-        super(message);
-        this.name = "AUTH_NOT_AUTHORIZED";
-        this.statusCode = 401;
+export class UnauthorizedRequestError extends JWAError {
+    constructor(message: string, origin?: Error) {
+        super(
+            401,
+            UnauthorizedRequestError.name,
+            `This endpoint require an authorization token. Details: ${message}`,
+            "AUTH_NOT_AUTHORIZED",
+            origin
+        );
     }
 }

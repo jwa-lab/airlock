@@ -1,4 +1,13 @@
+const {
+    UnauthorizedRequestError
+} = require("../dist/lib/errors/unauthorizedRequestError");
+const {
+    ForbiddenRequestError
+} = require("../dist/lib/errors/forbiddenRequestError");
+const { UnknownItemError } = require("../dist/lib/errors/unknownItemError");
+
 const axios = require("axios");
+
 const utils = require("./utils/utils");
 
 const {
@@ -31,7 +40,7 @@ describe("Given Airlock is running", () => {
             try {
                 await axios.get(`${SERVER_URL}/auth`);
 
-                throw new Error(
+                throw new UnauthorizedRequestError(
                     "Should fail with a 401 error for client request errors"
                 );
             } catch (err) {
@@ -70,7 +79,7 @@ describe("Given Airlock is running", () => {
             try {
                 await axios.get(`${SERVER_URL}/auth`, axiosConfig);
 
-                throw new Error(
+                throw new ForbiddenRequestError(
                     "Should fail with a 403 error for client request errors"
                 );
             } catch (err) {
@@ -147,13 +156,14 @@ describe("Given Airlock is running", () => {
                 try {
                     await axios.get(`${SERVER_URL}/item/2`, axiosConfig);
 
-                    throw new Error(
+                    throw new UnknownItemError(
                         "should fail with a 400 error for client request errors"
                     );
                 } catch (err) {
                     expect(err.response.data).toEqual({
-                        message: "Item doesn't exist",
-                        name: "BAD_REQUEST"
+                        name: "UnknownItemError",
+                        message: "Item does not exists. Details: Item ID: 2.",
+                        errorCode: "UNKNOWN_ITEM"
                     });
 
                     expect(err.response.status).toEqual(400);

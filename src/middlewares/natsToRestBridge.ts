@@ -5,7 +5,8 @@ import {
     headers as natsHeaders
 } from "nats";
 import { NextFunction, Request, Response } from "express";
-import { BadRequestError, NotFoundRequestError } from "../lib/errors";
+import { NotFoundRequestError } from "../lib/errors";
+import { JWAError } from "@jwalab/errors";
 
 interface PlatformResponse extends Object {
     error?: string;
@@ -52,7 +53,17 @@ export default function restToNatsBridgeFactory(
             const response = jsonCodec.decode(reply.data) as PlatformResponse;
 
             if (response?.error) {
-                return next(new BadRequestError(response.error));
+                try {
+                    const { httpCode, name, message, errorCode } = JSON.parse(
+                        response.error
+                    );
+
+                    return next(
+                        new JWAError(httpCode, name, message, errorCode)
+                    );
+                } catch (error) {
+                    return next(new Error(response.error));
+                }
             }
 
             if (reply?.headers?.get("set-cookie")) {

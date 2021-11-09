@@ -1,9 +1,13 @@
-export class ForbiddenRequestError extends Error {
-    private statusCode: number;
+import { JWAError } from "@jwalab/errors";
 
-    constructor(message: string) {
-        super(message);
-        this.name = "AUTH_INVALID_TOKEN";
-        this.statusCode = 403;
+export class ForbiddenRequestError extends JWAError {
+    constructor(message: string, origin?: Error) {
+        super(
+            403,
+            ForbiddenRequestError.name,
+            `This endpoint require further authorizations. Details: ${message}`,
+            "AUTH_INVALID_TOKEN",
+            origin
+        );
     }
 }

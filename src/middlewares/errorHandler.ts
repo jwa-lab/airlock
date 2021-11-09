@@ -1,34 +1,30 @@
 import { NextFunction, Request, Response } from "express";
-
-interface ResponseErrorInterface extends Error {
-    statusCode?: number;
-}
-
-interface HTTPResponseErrorInterface {
-    name: string;
-    message?: string;
-}
+import { JWAError } from "@jwalab/errors";
 
 export default async function errorHandlingMiddleware(
-    error: ResponseErrorInterface,
+    error: JWAError | Error,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     req: Request,
     res: Response,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: NextFunction
 ): Promise<Response> {
-    let httpResponse = {};
+    console.error(error);
 
-    if (!error?.statusCode) {
-        console.error(error);
-        return res.status(500).send({
-            message: "server error"
+    if (error instanceof JWAError) {
+        const { httpCode, name, message, errorCode } = error;
+
+        return res.status(httpCode).send({
+            name,
+            message,
+            errorCode
         });
     }
 
-    httpResponse = {
-        name: error.name,
-        message: error?.message
-    } as HTTPResponseErrorInterface;
-
-    return res.status(error.statusCode).send(httpResponse);
+    return res.status(500).send({
+        name: "UNCATCHED_ERROR",
+        errorCode: "UncatchedOrMalformedError",
+        message:
+            "An unexpected error occurred, our teams have been alerted and will be working on it soon."
+    });
 }

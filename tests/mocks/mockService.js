@@ -1,3 +1,5 @@
+const { UnknownItemError } = require("../../dist/lib/errors/unknownItemError");
+
 const { connect, JSONCodec } = require("nats");
 
 let jc = JSONCodec();
@@ -90,18 +92,22 @@ async function run() {
 
             const item = items[id];
 
-            if (item) {
-                if (query && query.field) {
-                    message.respond(
-                        jc.encode({
-                            [query.field]: items[id][query.field]
-                        })
-                    );
+            try {
+                if (item) {
+                    if (query && query.field) {
+                        message.respond(
+                            jc.encode({
+                                [query.field]: items[id][query.field]
+                            })
+                        );
+                    } else {
+                        message.respond(jc.encode(items[id]));
+                    }
                 } else {
-                    message.respond(jc.encode(items[id]));
+                    throw new UnknownItemError(`Item ID: ${id}.`);
                 }
-            } else {
-                message.respond(jc.encode({ error: "Item doesn't exist" }));
+            } catch (e) {
+                message.respond(jc.encode({ error: JSON.stringify(e) }));
             }
         }
     })().then();
