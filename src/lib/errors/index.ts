@@ -3,3 +3,4 @@ export * from "./forbiddenRequestError";
 export * from "./notFoundRequestError";
 export * from "./unauthorizedRequestError";
 export * from "./unknownItemError";
+export * from "./airlockError";
