@@ -5,8 +5,7 @@ import {
     headers as natsHeaders
 } from "nats";
 import { NextFunction, Request, Response } from "express";
-import { NotFoundRequestError } from "../lib/errors";
-import { JWAError } from "@jwalab/errors";
+import { AirlockError, NotFoundRequestError } from "../lib/errors";
 
 interface PlatformResponse extends Object {
     error?: string;
@@ -59,7 +58,7 @@ export default function restToNatsBridgeFactory(
                     );
 
                     return next(
-                        new JWAError(httpCode, name, message, errorCode)
+                        new AirlockError(name, httpCode, message, errorCode)
                     );
                 } catch (error) {
                     return next(new Error(response.error));
