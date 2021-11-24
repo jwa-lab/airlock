@@ -12,7 +12,7 @@ declare -a tags=(
     $(node -p -e "require('./package.json').version")
 )
 
-declare name=$(node -p -e "require('./package.json').name")
+declare name=$(node -p -e "require('./package.json').name.substring(1)")
 
 function start() {
     docker-compose up
@@ -23,11 +23,11 @@ function stop() {
 }
 
 function docker-build() {
-    docker build . -t jwalab/airlock
+    docker build . -t ${name}
 }
 
 function docker-push() {
-    docker push jwalab/airlock
+    docker push ${name}
 }
 
 function start-node() {
@@ -51,21 +51,21 @@ function test() {
 }
 
 function docker-build() {
-    docker build . -t jwalab/$name
+    docker build . -t ${name}
 }
 
 function docker-tag() {
     for tag in ${tags[@]}
     do
-        docker tag jwalab/$name jwalab/$name:$tag
+        docker tag ${name} ${name}:$tag
     done
 }
 
 function docker-push() {
-    docker push jwalab/$name
+    docker push ${name}
     for tag in ${tags[@]}
     do
-        docker push jwalab/$name:$tag
+        docker push ${name}:$tag
     done
 }
 
