@@ -1,6 +1,6 @@
 {
     "name": "@jwalab/airlock",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Airlock is an HTTP<->NATS bridge granting access to the JWA platform's resources",
     "main": "dist/index.js",
     "directories": {
